@@ -1,7 +1,10 @@
-package fr.fredgodard.chatop.model;
+package fr.fredgodard.chatop.repository.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -10,7 +13,8 @@ import java.util.Objects;
 @Data
 @Entity
 @Table(name = "RENTALS")
-public class ChatopRentalEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class RentalEntity {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -35,30 +39,32 @@ public class ChatopRentalEntity {
     @Column(name = "owner_id", nullable = false)
     private Integer ownerId;
 
+    @CreatedDate
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
+    private Date created_at;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    private Date updated_at;
 
     @Override
     public boolean equals(Object o) {
 
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChatopRentalEntity that = (ChatopRentalEntity) o;
+        RentalEntity that = (RentalEntity) o;
 
-        if (id != that.id) return false;
-        if (ownerId != that.ownerId) return false;
+        if (!Objects.equals(id, that.id)) return false;
+        if (!Objects.equals(ownerId, that.ownerId)) return false;
         if (!Objects.equals(name, that.name)) return false;
         if (!Objects.equals(surface, that.surface)) return false;
         if (!Objects.equals(price, that.price)) return false;
         if (!Objects.equals(picture, that.picture)) return false;
         if (!Objects.equals(description, that.description)) return false;
-        if (!Objects.equals(creationDate, that.creationDate)) return false;
-        if (!Objects.equals(updatedDate, that.updatedDate)) return false;
+        if (!Objects.equals(created_at, that.created_at)) return false;
+        if (!Objects.equals(updated_at, that.updated_at)) return false;
 
         return true;
     }
@@ -72,10 +78,9 @@ public class ChatopRentalEntity {
         result = 31 * result + (picture != null ? picture.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + ownerId;
-        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
-        result = 31 * result + (updatedDate != null ? updatedDate.hashCode() : 0);
+        result = 31 * result + (created_at != null ? created_at.hashCode() : 0);
+        result = 31 * result + (updated_at != null ? updated_at.hashCode() : 0);
         return result;
     }
-
 
 }

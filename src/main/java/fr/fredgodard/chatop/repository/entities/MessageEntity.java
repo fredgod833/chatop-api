@@ -1,7 +1,8 @@
-package fr.fredgodard.chatop.model;
+package fr.fredgodard.chatop.repository.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 import java.util.Objects;
@@ -9,7 +10,8 @@ import java.util.Objects;
 @Data
 @Entity
 @Table(name = "MESSAGES")
-public class ChatopMessageEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class MessageEntity {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -22,30 +24,30 @@ public class ChatopMessageEntity {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    @Column(name = "message", nullable = true, length = 2000)
+    @Column(name = "message", length = 2000)
     private String message;
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
+    private Date created_at;
 
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    private Date updated_at;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ChatopMessageEntity that = (ChatopMessageEntity) o;
+        MessageEntity that = (MessageEntity) o;
 
-        if (id != that.id) return false;
+        if (!Objects.equals(id, that.id)) return false;
         if (!Objects.equals(rentalId, that.rentalId)) return false;
         if (!Objects.equals(userId, that.userId)) return false;
         if (!Objects.equals(message, that.message)) return false;
-        if (!Objects.equals(creationDate, that.creationDate)) return false;
-        if (!Objects.equals(updatedDate, that.updatedDate)) return false;
+        if (!Objects.equals(created_at, that.created_at)) return false;
+        if (!Objects.equals(updated_at, that.updated_at)) return false;
 
         return true;
     }
@@ -56,8 +58,8 @@ public class ChatopMessageEntity {
         result = 31 * result + (rentalId != null ? rentalId.hashCode() : 0);
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (message != null ? message.hashCode() : 0);
-        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
-        result = 31 * result + (updatedDate != null ? updatedDate.hashCode() : 0);
+        result = 31 * result + (created_at != null ? created_at.hashCode() : 0);
+        result = 31 * result + (updated_at != null ? updated_at.hashCode() : 0);
         return result;
     }
 

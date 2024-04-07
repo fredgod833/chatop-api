@@ -1,9 +1,13 @@
-package fr.fredgodard.chatop.model;
+package fr.fredgodard.chatop.repository.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,8 +19,8 @@ import java.util.Objects;
                 @UniqueConstraint(name = "email_unicity", columnNames = {"email"})
         }
 )
-
-public class ChatopUserEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class UserEntity implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -34,32 +38,34 @@ public class ChatopUserEntity {
 
     @OneToMany
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    private List<ChatopRentalEntity> chatopRentalEntities;
+    private List<RentalEntity> rentalEntityEntities;
 
     @OneToMany
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private List<ChatopMessageEntity> chatopMessageEntities;
+    private List<MessageEntity> chatopMessageEntities;
 
-    @Column(name = "created_at")
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
+    private LocalDateTime created_at;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    private LocalDateTime updated_at;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ChatopUserEntity that = (ChatopUserEntity) o;
-        if (id != that.id) return false;
+        UserEntity that = (UserEntity) o;
+        if (!Objects.equals(id, that.id)) return false;
         if (!Objects.equals(email, that.email)) return false;
         if (!Objects.equals(name, that.name)) return false;
         if (!Objects.equals(password, that.password)) return false;
-        if (!Objects.equals(creationDate, that.creationDate)) return false;
-        if (!Objects.equals(updatedDate, that.updatedDate)) return false;
+        if (!Objects.equals(created_at, that.created_at)) return false;
+        if (!Objects.equals(updated_at, that.updated_at)) return false;
 
         return true;
     }
@@ -70,8 +76,8 @@ public class ChatopUserEntity {
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
-        result = 31 * result + (updatedDate != null ? updatedDate.hashCode() : 0);
+        result = 31 * result + (created_at != null ? created_at.hashCode() : 0);
+        result = 31 * result + (updated_at != null ? updated_at.hashCode() : 0);
         return result;
     }
 
