@@ -1,5 +1,7 @@
 package fr.fredgodard.chatop.service;
 
+import fr.fredgodard.chatop.exceptions.MessageException;
+import fr.fredgodard.chatop.exceptions.RentalException;
 import fr.fredgodard.chatop.model.Message;
 import fr.fredgodard.chatop.repository.MessageRepository;
 import fr.fredgodard.chatop.repository.RentalsRepository;
@@ -44,11 +46,11 @@ public class MessageService {
         return result;
     }
 
-    public Message saveMessage(final Message message) throws RentalException {
+    public Message saveMessage(final Message message) throws MessageException {
         if (message.getOwner_id() == null) {
             Optional<RentalEntity> rental = rentalRepository.findById(message.getRental_id());
             if (! rental.isPresent()) {
-                throw new RentalException("Rental owner not found !", null);
+                throw new MessageException("Rental owner not found !");
             }
             message.setOwner_id(rental.get().getOwnerId());
         }

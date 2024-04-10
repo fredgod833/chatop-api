@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -23,8 +24,8 @@ public class Rental implements Serializable {
 
     private String picture;
 
-    private Date created_at;
+    private LocalDateTime created_at;
 
-    private Date updated_at;
+    private LocalDateTime updated_at;
 
 }

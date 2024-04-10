@@ -1,10 +1,10 @@
-package fr.fredgodard.firstapi;
+package fr.fredgodard.chatop;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FirstApiApplicationTests {
+class ChatopApplicationTests {
 
     @Test
     void contextLoads() {

@@ -2,8 +2,11 @@ package fr.fredgodard.chatop.repository.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -27,13 +30,15 @@ public class MessageEntity {
     @Column(name = "message", length = 2000)
     private String message;
 
+    @CreatedDate
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date created_at;
+    private LocalDateTime created_at;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updated_at;
+    private LocalDateTime updated_at;
 
     @Override
     public boolean equals(Object o) {

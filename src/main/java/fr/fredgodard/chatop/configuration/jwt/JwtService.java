@@ -2,7 +2,9 @@ package fr.fredgodard.chatop.configuration.jwt;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import fr.fredgodard.chatop.model.Client;
+import fr.fredgodard.chatop.model.Token;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
@@ -16,19 +18,23 @@ import java.time.temporal.ChronoUnit;
 @Service
 public class JwtService {
 
-    private static final String SECRET = "7PLTpbz5CRH6WK2m4iphkCY6my5xu1fF";
+    private Environment env;
+
+    private final String secret;
 
     private final JwtEncoder jwtEncoder;
 
     private final JwtDecoder jwtDecoder;
 
-    public JwtService() {
-        SecretKeySpec secretKey = new SecretKeySpec(SECRET.getBytes(), "RSA");
-        this.jwtEncoder = new NimbusJwtEncoder(new ImmutableSecret<>(SECRET.getBytes()));
+    public JwtService(Environment env) {
+        this.env = env;
+        this.secret = env.getProperty("secret.key");
+        SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(), "RSA");
+        this.jwtEncoder = new NimbusJwtEncoder(new ImmutableSecret<>(secret.getBytes()));
         this.jwtDecoder = NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
     }
 
-    public String generateAccessToken(Client user) {
+    public Token generateAccessToken(Client user) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
@@ -37,7 +43,9 @@ public class JwtService {
                 .subject(user.getEmail())
                 .build();
         JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(), claims);
-        return this.jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
+        Token result = new Token();
+        result.setToken(jwtEncoder.encode(jwtEncoderParameters).getTokenValue());
+        return result;
     }
 
     public boolean validateAccessToken(String token) {

@@ -1,4 +1,4 @@
-package fr.fredgodard.chatop.service;
+package fr.fredgodard.chatop.exceptions;
 
 public class ClientException extends Throwable {
 

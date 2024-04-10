@@ -1,5 +1,8 @@
 package fr.fredgodard.chatop.service;
 
+import fr.fredgodard.chatop.exceptions.AuthException;
+import fr.fredgodard.chatop.exceptions.ClientException;
+import fr.fredgodard.chatop.exceptions.ClientNotFoundException;
 import fr.fredgodard.chatop.repository.entities.UserEntity;
 import fr.fredgodard.chatop.repository.UsersRepository;
 import fr.fredgodard.chatop.model.Client;
@@ -49,11 +52,12 @@ public class ChatopUserService {
         return userEntity;
     }
 
-
-
-    public Optional<Client> getUserById(final Integer id) {
+    public Client getUserById(final Integer id) throws ClientNotFoundException {
         Optional<UserEntity> userEntity = usersRepository.findById(id);
-        return userEntity.map(ChatopUserService::entity2Bean);
+        if (! userEntity.isPresent()) {
+            throw new ClientNotFoundException("User not found");
+        }
+        return userEntity.map(ChatopUserService::entity2Bean).get();
     }
 
     public void deleteUserById(@PathVariable("id") final Integer id) {
@@ -70,25 +74,27 @@ public class ChatopUserService {
         }
     }
 
-    public Client loadConnectedUser(final Authentication auth) throws ClientException {
+    public Client loadConnectedUser(final Authentication auth) throws AuthException {
+        if (auth == null || auth.getName() == null) {
+            throw new AuthException("Invalid user");
+        }
         List<UserEntity> userEntities = usersRepository.findUserByEmail(auth.getName());
         if (userEntities.size() == 1) {
             return entity2Bean(userEntities.get(0));
         }
-        throw new ClientException("Unknown client, please log in.");
+        throw new AuthException("Current user unknown, please log in.");
     }
 
-    public Optional<Client> loadWithCredentials(final Credentials userCredentials) {
-        // TODO : ne pas retourner un Optional mais déclencher une exception userntofound
+    public Client loadWithCredentials(final Credentials userCredentials) throws AuthException {
         List<UserEntity> userEntities = usersRepository.findUserByEmail(userCredentials.getEmail());
         if (userEntities.size() == 1) {
             UserEntity userEntity = userEntities.get(0);
             if (userEntity == null || !encoder.matches(userCredentials.getPassword(), userEntity.getPassword())) {
-                return Optional.empty();
+                throw new AuthException("User not found or invalid credentials.");
             }
-            return Optional.of(entity2Bean(userEntity));
+            return entity2Bean(userEntity);
         }
-        return Optional.empty();
+        throw new AuthException("User not found or invalid credentials.");
     }
 
 }

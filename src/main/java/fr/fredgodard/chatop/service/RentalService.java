@@ -1,5 +1,6 @@
 package fr.fredgodard.chatop.service;
 
+import fr.fredgodard.chatop.exceptions.RentalException;
 import fr.fredgodard.chatop.model.Rental;
 import fr.fredgodard.chatop.model.Client;
 import fr.fredgodard.chatop.repository.RentalsRepository;
